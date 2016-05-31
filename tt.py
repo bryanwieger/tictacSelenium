@@ -1,6 +1,5 @@
 # tic tac toe game
 
-import itertools
 import os
 import time
 from selenium import webdriver
@@ -191,13 +190,16 @@ class AI:
 				return i
 
 class WebInter:
+	# used for xpathing to spots on the page
 	names = ["square top left", "square top", "square top right",
 		"square left", "square", "square right", 
 		"square bottom left", "square bottom", "square bottom right"]
+	# used to initiate the interface
 	def __init__(self,driver):
 		self.driver = driver
 		self.prevBoard = None
 		self.verbose = True
+	# used to check if a piece is at a certain position
 	def checkValue(self,postiion,piece):
 		if piece == Board.x:
 			pattern = "//*/div[@class='"+WebInter.names[postiion]+"']/div[@class='x']"
@@ -208,6 +210,7 @@ class WebInter:
 			return True
 		except:
 			return False
+	# used click on an element. It will wait a little after the click
 	def click(self,postiion):
 		pattern = "//*/div[@class='"+WebInter.names[postiion]+"']"
 		elem = self.driver.find_element_by_xpath(pattern)
@@ -215,8 +218,10 @@ class WebInter:
 		elem.click()
 		self.wait()
 		print("...Done")
+	# used to wait 
 	def wait(self):
 		time.sleep(.75)
+	# used to send the board into something recognizable for our ai
 	def makeBoard(self):
 		board = Board()
 		for i in range(0,9):
@@ -230,11 +235,13 @@ class WebInter:
 			print("displaying board...")
 			board.show()
 		return board
+	# used to restart the game
 	def restart(self):
+		# wait a little before clicking
+		self.wait()
 		pattern = "//*/div[@class='restart']"
 		elem = self.driver.find_element_by_xpath(pattern)
 		elem.click()
-		self.wait()
 
 
 
@@ -248,31 +255,47 @@ blank = Board.b
 # b.play(ai)
 
 
-
+# a function to pit an online comp player against this one
 def siliwars():
+	# go to the website
 	driver = webdriver.Firefox()
 	driver.get("http://playtictactoe.org/")
+	# set up the interface
 	w = WebInter(driver)
+	# initiate our player
 	ai = AI()
+	# get the board state from the web
 	board = w.makeBoard()
+	# set up the number of times to play
 	i = 0
 	limit = 10
+	# keep re-playing till the end of the limits
 	while i < limit and not (board.checkForWinner(Board.x) or board.checkForWinner(Board.o)):
+		# get the move from the our player
 		m = ai.getMove(board, Board.x, Board.o )
 		try:
+			# try inputing to the website
+			# the assumption is that our ai has properly read the board and will
+			# give a valid response move
 			p = m[0]*3+m[1]
 			w.click(p)
 		except:
+			# if it is not the case the above is true then we must be at the 
+			# end of the game. So we restart and count 
 			w.restart()
 			i = i + 1
+		# get the board state after we have moved and give time for the other to move
 		board = w.makeBoard()
 
-
+	# let the user know that we are about to close out the browser
 	print("Closing Browser in...")
-	for i in range(0,10):
+	t = 5
+	for i in range(0,t):
 		time.sleep(1)
-		print(10-i," Seconds")
+		print(t-i," Seconds")
+	# close the browsers
 	driver.close()
 
+# pit the ai against the website
 siliwars()
 
