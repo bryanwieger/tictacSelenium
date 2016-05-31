@@ -1,10 +1,19 @@
-# tic tac toe game
+# tic tac toe game that can interface via selenium with website that
+# hosts the game
+# Author: Bryan Wieger
+# Email: bryan.wieger@gmail.com
+# Notes: You are welcome to use/modify this code as much or as little as you please
+# It is requested that this code is not ever used in a product that is sold 
+# or used along side advertisements of any kind. 
+# This code is meant for education purposes and was developed to show a 5th grade 
+# class some of the capablities of coding/computer science
 
 import os
 import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+# a way to store the board and keep track of moves (if hosted without selenium)
 class Board:
 	# some const values
 	x = 'x'
